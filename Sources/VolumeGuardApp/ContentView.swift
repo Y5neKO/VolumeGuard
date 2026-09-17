@@ -23,6 +23,7 @@ struct ContentView: View {
         }
         .onAppear { vm.refreshVolumes() }
         .onChange(of: vm.selectedVolume) { _ in vm.refreshProcesses() }
+        .focusedObject(vm)
     }
 
     private var detail: some View {

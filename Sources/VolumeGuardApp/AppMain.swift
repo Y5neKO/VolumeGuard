@@ -12,7 +12,7 @@ struct VolumeGuardApp: App {
         }
         .windowResizability(.contentMinSize)
         .commands {
-            VolumeGuardCommands(vm: vm)
+            VolumeGuardCommands()
         }
 
         // 菜单栏常驻：窗口风格面板，每卷可就地解除/弹出
@@ -26,9 +26,11 @@ struct VolumeGuardApp: App {
     }
 }
 
-/// 顶部菜单栏精简：去掉无用默认项，补上高频操作
+/// 顶部菜单栏精简：去掉无用默认项，补上高频操作。
+/// disabled 状态经 @FocusedObject 跟随聚焦窗口的实时数据，
+/// 否则 Commands 只拿到结构体创建时刻的快照，菜单会永远保持初始灰态。
 struct VolumeGuardCommands: Commands {
-    let vm: AppViewModel
+    @FocusedObject private var vm: AppViewModel?
 
     var body: some Commands {
         // 去掉 File > New Window
@@ -41,29 +43,29 @@ struct VolumeGuardCommands: Commands {
         // 高频操作菜单
         CommandMenu(L("Actions")) {
             Button(L("Refresh")) {
-                vm.refreshVolumes(manual: true)
+                vm?.refreshVolumes(manual: true)
             }
             .keyboardShortcut("r")
 
             Button(L("Release All…")) {
-                vm.showKillAllConfirm = true
+                vm?.showKillAllConfirm = true
             }
             .keyboardShortcut("k", modifiers: [.command, .shift])
-            .disabled(vm.processes.isEmpty)
+            .disabled(vm == nil || vm!.processes.isEmpty)
 
             Button(L("Space Analysis…")) {
-                vm.showSpaceAnalysis = true
+                vm?.showSpaceAnalysis = true
             }
             .keyboardShortcut("i", modifiers: .command)
-            .disabled(vm.selectedVolume == nil)
+            .disabled(vm == nil || vm!.selectedVolume == nil)
 
             Divider()
 
             Button(L("Eject")) {
-                vm.ejectSelected()
+                vm?.ejectSelected()
             }
             .keyboardShortcut("e", modifiers: .command)
-            .disabled(vm.selectedVolume == nil)
+            .disabled(vm == nil || vm!.selectedVolume == nil)
         }
     }
 }

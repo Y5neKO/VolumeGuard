@@ -39,6 +39,7 @@ struct MenuPanelView: View {
         }
         .padding(10)
         .frame(width: 300)
+        .focusedObject(vm)
         .onAppear { vm.refreshMenuCounts() }
     }
 
