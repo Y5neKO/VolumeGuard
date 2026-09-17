@@ -21,7 +21,7 @@ struct DetailSheetView: View {
                     HStack(spacing: 8) {
                         Text(process.name).font(.title3.bold())
                         if process.isSelf {
-                            Text("(本工具)")
+                            Text(L("(this app)"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -38,16 +38,16 @@ struct DetailSheetView: View {
             // 属性
             Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 6) {
                 GridRow {
-                    Text("PID").foregroundStyle(.secondary)
+                    Text(L("PID")).foregroundStyle(.secondary)
                     Text("\(process.pid)").monospacedDigit().textSelection(.enabled)
                 }
                 GridRow {
-                    Text("UID").foregroundStyle(.secondary)
+                    Text(L("UID")).foregroundStyle(.secondary)
                     Text("\(process.uid)").monospacedDigit().textSelection(.enabled)
                 }
                 GridRow {
-                    Text("可执行文件").foregroundStyle(.secondary)
-                    Text(process.executablePath ?? "（当前权限不可见）")
+                    Text(L("Executable")).foregroundStyle(.secondary)
+                    Text(process.executablePath ?? L("(not visible with current privileges)"))
                         .font(.system(.caption, design: .monospaced))
                         .textSelection(.enabled)
                 }
@@ -56,7 +56,7 @@ struct DetailSheetView: View {
             Divider()
 
             // 占用路径完整列表
-            Text("占用路径（\(process.occupied.count)）").font(.headline)
+            Text(LF("Occupied paths (%d)", process.occupied.count)).font(.headline)
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(process.occupied, id: \.self) { f in
                     HStack(alignment: .top, spacing: 8) {
@@ -78,12 +78,12 @@ struct DetailSheetView: View {
 
             // 操作
             HStack {
-                Button("强制结束", role: .destructive) { onKill(true) }
+                Button(L("Force Terminate"), role: .destructive) { onKill(true) }
                     .disabled(process.isSelf)
-                Button("结束进程") { onKill(false) }
+                Button(L("Terminate")) { onKill(false) }
                     .disabled(process.isSelf)
                 Spacer()
-                Button("关闭") { dismiss() }
+                Button(L("Close")) { dismiss() }
                     .keyboardShortcut(.cancelAction)
             }
         }

@@ -17,6 +17,12 @@ if [ ! -f build/VolumeGuard.icns ]; then
 fi
 cp build/VolumeGuard.icns "$APP/Contents/Resources/VolumeGuard.icns"
 
+# 本地化资源（英文为源语言，其余语言放 Resources/<lang>.lproj）
+for lproj in Resources/*.lproj; do
+    [ -e "$lproj" ] || continue
+    cp -R "$lproj" "$APP/Contents/Resources/"
+done
+
 cat > "$APP/Contents/Info.plist" << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -33,6 +39,12 @@ cat > "$APP/Contents/Info.plist" << 'PLIST'
     <key>LSMinimumSystemVersion</key>    <string>13.0</string>
     <key>LSApplicationCategoryType</key> <string>public.app-category.utilities</string>
     <key>NSHighResolutionCapable</key>   <true/>
+    <key>CFBundleDevelopmentRegion</key> <string>en</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>en</string>
+        <string>zh-Hans</string>
+    </array>
 </dict>
 </plist>
 PLIST

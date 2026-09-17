@@ -10,7 +10,7 @@ struct MenuPanelView: View {
     var body: some View {
         VStack(spacing: 8) {
             if vm.mountPoints.isEmpty {
-                Text("没有外接卷")
+                Text(L("No external volumes"))
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .padding(.vertical, 6)
@@ -26,14 +26,14 @@ struct MenuPanelView: View {
                 openWindow(id: "main")
                 NSApp.activate(ignoringOtherApps: true)
             } label: {
-                Label("打开主窗口", systemImage: "macwindow")
+                Label(L("Open Main Window"), systemImage: "macwindow")
             }
             .keyboardShortcut("o", modifiers: .command)
 
             Button {
                 NSApp.terminate(nil)
             } label: {
-                Label("退出 VolumeGuard", systemImage: "power")
+                Label(L("Quit VolumeGuard"), systemImage: "power")
             }
             .keyboardShortcut("q", modifiers: .command)
         }
@@ -52,7 +52,7 @@ struct MenuPanelView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(shortName(mp))
                     .font(.system(.body, weight: .medium))
-                Text(count == nil ? "扫描中…" : (busy ? "\(count!) 个进程占用" : "空闲"))
+                Text(count == nil ? L("Scanning…") : (busy ? LF("%d processes", count!) : L("Idle")))
                     .font(.caption)
                     .foregroundStyle(busy ? Color.orange : Color.secondary)
             }
@@ -61,11 +61,11 @@ struct MenuPanelView: View {
                 if vm.isReleasing {
                     ProgressView().controlSize(.small)
                 } else {
-                    Button("解除") { confirmRelease(mp) }
+                    Button(L("Release")) { confirmRelease(mp) }
                         .controlSize(.small)
                 }
             }
-            Button("弹出") { confirmEject(mp) }
+            Button(L("Eject")) { confirmEject(mp) }
                 .controlSize(.small)
         }
         .padding(8)
@@ -82,11 +82,11 @@ struct MenuPanelView: View {
     /// 解除前确认，防止托盘误触直接开杀
     private func confirmRelease(_ mp: String) {
         let alert = NSAlert()
-        alert.messageText = "解除「\(shortName(mp))」的全部占用？"
-        alert.informativeText = "将先发送 SIGTERM，对未退出的进程自动补 SIGKILL。root 进程无法解除。"
+        alert.messageText = LF("Release all occupancy on \"%@\"?", shortName(mp))
+        alert.informativeText = L("SIGTERM first; SIGKILL is sent automatically to anything still holding on. Root processes cannot be released.")
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "解除")
-        alert.addButton(withTitle: "取消")
+        alert.addButton(withTitle: L("Release"))
+        alert.addButton(withTitle: L("Cancel"))
         if alert.runModal() == .alertFirstButtonReturn {
             vm.releaseVolume(mp)
         }
@@ -100,12 +100,12 @@ struct MenuPanelView: View {
             return
         }
         let alert = NSAlert()
-        alert.messageText = "「\(shortName(mp))」仍有进程占用"
-        alert.informativeText = "直接弹出会被系统拒绝。建议先解除占用，完成后再弹出。"
+        alert.messageText = LF("\"%@\" is still busy", shortName(mp))
+        alert.informativeText = L("Ejecting now will be rejected by the system. Release first, then eject.")
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "解除并弹出")
-        alert.addButton(withTitle: "仍要直接弹出")
-        alert.addButton(withTitle: "取消")
+        alert.addButton(withTitle: L("Release and Eject"))
+        alert.addButton(withTitle: L("Eject Anyway"))
+        alert.addButton(withTitle: L("Cancel"))
         switch alert.runModal() {
         case .alertFirstButtonReturn:
             vm.releaseVolume(mp, ejectAfter: true)

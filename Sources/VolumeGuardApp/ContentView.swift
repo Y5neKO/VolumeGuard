@@ -16,8 +16,8 @@ struct ContentView: View {
             detail
         }
         .frame(minWidth: 780, minHeight: 480)
-        .alert("操作失败", isPresented: $vm.showAlert) {
-            Button("好", role: .cancel) {}
+        .alert(L("Action failed"), isPresented: $vm.showAlert) {
+            Button(L("OK"), role: .cancel) {}
         } message: {
             Text(vm.alertText ?? "")
         }
@@ -34,34 +34,34 @@ struct ContentView: View {
             Divider()
             actionBar
         }
-        .confirmationDialog("解除全部占用？", isPresented: $vm.showKillAllConfirm, titleVisibility: .visible) {
-            Button("解除全部（\(vm.processes.count) 个进程）", role: .destructive) {
+        .confirmationDialog(L("Release all occupancy?"), isPresented: $vm.showKillAllConfirm, titleVisibility: .visible) {
+            Button(LF("Release all (%d processes)", vm.processes.count), role: .destructive) {
                 vm.killAll()
             }
-            Button("解除并弹出", role: .destructive) {
+            Button(L("Release and Eject"), role: .destructive) {
                 vm.killAll(ejectAfter: true)
             }
-            Button("取消", role: .cancel) {}
+            Button(L("Cancel"), role: .cancel) {}
         } message: {
-            Text("将先发送 SIGTERM，对未退出的进程自动补 SIGKILL。root 进程无法解除。")
+            Text(L("SIGTERM first; SIGKILL is sent automatically to anything still holding on. Root processes cannot be released."))
         }
         .sheet(isPresented: $vm.showSpaceAnalysis) {
             if let mp = vm.selectedVolume {
                 SpaceAnalysisSheet(mountPoint: mp)
             }
         }
-        .confirmationDialog("当前卷有 \(vm.processes.count) 个进程占用", isPresented: $vm.showEjectConfirm, titleVisibility: .visible) {
-            Button("解除并弹出", role: .destructive) {
+        .confirmationDialog(LF("%d processes are holding this volume", vm.processes.count), isPresented: $vm.showEjectConfirm, titleVisibility: .visible) {
+            Button(L("Release and Eject"), role: .destructive) {
                 vm.killAll(ejectAfter: true)
             }
-            Button("仍要直接弹出", role: .destructive) {
+            Button(L("Eject Anyway"), role: .destructive) {
                 if let mp = vm.selectedVolume {
                     vm.eject(mp)
                 }
             }
-            Button("取消", role: .cancel) {}
+            Button(L("Cancel"), role: .cancel) {}
         } message: {
-            Text("直接弹出会被系统拒绝。建议先解除占用，完成后再弹出。")
+            Text(L("Ejecting now will be rejected by the system. Release first, then eject."))
         }
         .sheet(item: $vm.detailProcess) { p in
             DetailSheetView(process: p) { force in
@@ -73,11 +73,11 @@ struct ContentView: View {
 
     private var header: some View {
         HStack(spacing: 8) {
-            Text(vm.selectedVolume ?? "未选择卷")
+            Text(vm.selectedVolume ?? L("No volume selected"))
                 .font(.headline)
                 .textSelection(.enabled)
             if let u = vm.volumeUsage, vm.selectedVolume != nil {
-                Text("已用 \(fmt(Double(u.total - u.free))) / 共 \(fmt(Double(u.total)))")
+                Text(LF("Used %@ of %@", fmt(Double(u.total - u.free)), fmt(Double(u.total))))
                     .font(.caption)
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
@@ -86,7 +86,7 @@ struct ContentView: View {
             if vm.isManualRefreshing {
                 ProgressView().controlSize(.small)
             }
-            Text(vm.selectedVolume == nil ? "—" : "\(vm.processes.count) 个进程占用")
+            Text(vm.selectedVolume == nil ? "—" : LF("%d processes holding it", vm.processes.count))
                 .foregroundStyle(.secondary)
                 .monospacedDigit()
         }
@@ -100,7 +100,7 @@ struct ContentView: View {
             }
             .width(min: 60, ideal: 70)
 
-            TableColumn("进程") { p in
+            TableColumn(L("Process")) { p in
                 HStack(spacing: 6) {
                     Image(nsImage: processIcon(p))
                         .resizable()
@@ -112,15 +112,15 @@ struct ContentView: View {
                             .foregroundStyle(.tertiary)
                     }
                     if p.isSelf {
-                        Text("(本工具)")
+                        Text(L("(this app)"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
-                .help("双击查看完整详情")
+                .help(L("Double-click a row for full details"))
             }
 
-            TableColumn("占用详情") { p in
+            TableColumn(L("Occupation")) { p in
                 Text(p.occupied.map { "[\($0.source.rawValue)] \($0.path)" }.joined(separator: "   "))
                     .lineLimit(1)
                     .truncationMode(.middle)
@@ -134,8 +134,8 @@ struct ContentView: View {
                     Image(systemName: "checkmark.seal")
                         .font(.largeTitle)
                         .foregroundStyle(.secondary)
-                    Text("无占用").font(.title3)
-                    Text("当前没有进程占用这个卷，可以直接弹出")
+                    Text(L("No occupancy")).font(.title3)
+                    Text(L("Nothing is holding this volume — you can eject it now"))
                         .foregroundStyle(.secondary)
                 }
             }
@@ -156,7 +156,7 @@ struct ContentView: View {
             Button {
                 vm.refreshVolumes(manual: true)
             } label: {
-                Label("刷新", systemImage: "arrow.clockwise")
+                Label(L("Refresh"), systemImage: "arrow.clockwise")
             }
             .keyboardShortcut("r", modifiers: .command)
 
@@ -165,7 +165,7 @@ struct ContentView: View {
             Button {
                 vm.showSpaceAnalysis = true
             } label: {
-                Label("空间分析", systemImage: "chart.bar.fill")
+                Label(L("Space Analysis"), systemImage: "chart.bar.fill")
             }
             .disabled(vm.selectedVolume == nil)
 
@@ -175,14 +175,14 @@ struct ContentView: View {
                 if vm.isReleasing {
                     ProgressView().controlSize(.small)
                 } else {
-                    Label("一键解除", systemImage: "sparkles.rectangle.stack")
+                    Label(L("Release All"), systemImage: "sparkles.rectangle.stack")
                 }
             }
             .disabled(vm.processes.isEmpty || vm.isReleasing)
 
-            Button("结束进程") { vm.killSelected(force: false) }
+            Button(L("Terminate")) { vm.killSelected(force: false) }
                 .disabled(vm.selectedPIDs.isEmpty)
-            Button("强制结束") { vm.killSelected(force: true) }
+            Button(L("Force Terminate")) { vm.killSelected(force: true) }
                 .disabled(vm.selectedPIDs.isEmpty)
 
             Divider()
@@ -191,7 +191,7 @@ struct ContentView: View {
             Button {
                 vm.ejectSelected()
             } label: {
-                Label("弹出", systemImage: "eject")
+                Label(L("Eject"), systemImage: "eject")
             }
             .buttonStyle(.borderedProminent)
             .disabled(vm.selectedVolume == nil)

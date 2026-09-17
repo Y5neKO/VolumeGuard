@@ -145,7 +145,7 @@ final class AppViewModel: ObservableObject {
         var errors: [String] = []
         for pid in selectedPIDs.sorted() {
             if let err = force ? ProcessKiller.forceKill(pid) : ProcessKiller.terminate(pid) {
-                errors.append("PID \(pid)：\(err)")
+                errors.append(LF("PID %d: %@", pid, err))
             }
         }
         if !errors.isEmpty {
@@ -189,7 +189,7 @@ final class AppViewModel: ObservableObject {
             for p in targets {
                 if let err = ProcessKiller.terminate(p.pid) {
                     // EPERM 等：KILL 也会失败，记录后不重试
-                    denied.append("\(p.name)（PID \(p.pid)）：\(err)")
+                    denied.append(LF("%@ (PID %d): %@", p.name, p.pid, err))
                 }
             }
             try? await Task.sleep(nanoseconds: 800_000_000)
@@ -208,7 +208,8 @@ final class AppViewModel: ObservableObject {
             refreshMenuCounts()
 
             if !denied.isEmpty {
-                alert("以下进程无权限解除（root 进程，需 sudo）：\n" + denied.joined(separator: "\n"))
+                alert(L("No permission to release the following (root processes — sudo required):\n")
+                      + denied.joined(separator: "\n"))
             } else if ejectAfter {
                 // 留一轮扫描确认清空后再弹
                 try? await Task.sleep(nanoseconds: 500_000_000)

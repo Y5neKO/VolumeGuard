@@ -1,0 +1,74 @@
+/* VolumeGuard — Simplified Chinese */
+
+/* Common */
+"Cancel" = "取消";
+"OK" = "好";
+"Close" = "关闭";
+"Refresh" = "刷新";
+"Eject" = "弹出";
+"PID" = "PID";
+"UID" = "UID";
+
+/* Main window */
+"No volume selected" = "未选择卷";
+"Used %@ of %@" = "已用 %@ / 共 %@";
+"%d processes holding it" = "%d 个进程占用";
+"Process" = "进程";
+"Occupation" = "占用详情";
+"(this app)" = "（本工具）";
+"Double-click a row for full details" = "双击行查看完整详情";
+"No occupancy" = "无占用";
+"Nothing is holding this volume — you can eject it now" = "当前没有进程占用这个卷，可以直接弹出";
+"Space Analysis" = "空间分析";
+"Space Analysis…" = "空间分析…";
+"Release All" = "一键解除";
+"Release All…" = "一键解除当前卷占用…";
+"Terminate" = "结束进程";
+"Force Terminate" = "强制结束";
+
+/* Release / eject dialogs */
+"Release all occupancy?" = "解除全部占用？";
+"Release all (%d processes)" = "解除全部（%d 个进程）";
+"Release and Eject" = "解除并弹出";
+"Release" = "解除";
+"Eject Anyway" = "仍要直接弹出";
+"SIGTERM first; SIGKILL is sent automatically to anything still holding on. Root processes cannot be released." = "先发送 SIGTERM，未退出的进程自动补 SIGKILL。root 进程无法解除。";
+"%d processes are holding this volume" = "当前卷有 %d 个进程占用";
+"Ejecting now will be rejected by the system. Release first, then eject." = "直接弹出会被系统拒绝，建议先解除占用再弹出。";
+"Action failed" = "操作失败";
+
+/* Menu bar panel */
+"No external volumes" = "没有外接卷";
+"Scanning…" = "扫描中…";
+"%d processes" = "%d 个进程占用";
+"Idle" = "空闲";
+"Open Main Window" = "打开主窗口";
+"Quit VolumeGuard" = "退出 VolumeGuard";
+"Release all occupancy on \"%@\"?" = "解除「%@」的全部占用？";
+"\"%@\" is still busy" = "「%@」仍有进程占用";
+
+/* Detail sheet */
+"Executable" = "可执行文件";
+"(not visible with current privileges)" = "（当前权限不可见）";
+"Occupied paths (%d)" = "占用路径（%d）";
+
+/* Menus */
+"Actions" = "操作";
+
+/* Core: ProcessKiller / ProcessKnowledge / EjectService / release errors */
+"Permission denied (root process — sudo required)" = "无权限（root 进程，需 sudo）";
+"Process already exited" = "进程已退出";
+"Spotlight is building its index" = "Spotlight 正在建立索引";
+"Spotlight metadata store" = "Spotlight 元数据存储";
+"Finder preview / thumbnail generation" = "访达预览/缩略图生成";
+"A Finder window or the Desktop is on this volume" = "访达窗口或桌面位于卷上";
+"Time Machine backup" = "Time Machine 备份";
+"iCloud / file provider sync" = "iCloud/文件提供程序同步";
+"Photos / media analysis" = "照片/媒体库分析";
+"File system events log" = "文件系统事件日志";
+"Power management keep-awake" = "电源管理保持唤醒";
+"Failed to launch diskutil: %@" = "无法启动 diskutil：%@";
+"Eject failed (diskutil exit code %d)" = "弹出失败（diskutil 退出码 %d）";
+"PID %d: %@" = "PID %d：%@";
+"%@ (PID %d): %@" = "%@（PID %d）：%@";
+"No permission to release the following (root processes — sudo required):\n" = "以下进程无权限解除（root 进程，需 sudo）：\n";

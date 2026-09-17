@@ -22,8 +22,8 @@ public enum ProcessKiller {
     private static func send(_ pid: pid_t, _ sig: Int32) -> String? {
         if kill(pid, sig) == 0 { return nil }
         let e = errno
-        if e == EPERM { return "无权限（可能为 root 进程，需 sudo）" }
-        if e == ESRCH { return "进程已退出" }
+        if e == EPERM { return L("Permission denied (root process — sudo required)") }
+        if e == ESRCH { return L("Process already exited") }
         return String(cString: strerror(e))
     }
 }

@@ -14,15 +14,15 @@ struct SpaceAnalysisSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
-                Text("\(shortName(mountPoint)) — 空间分析")
+                Text(shortName(mountPoint) + L(" — Space Analysis"))
                     .font(.headline)
                 Spacer()
                 if let u = usage {
-                    Text("已用 \(fmt(Double(u.total - u.free))) / 共 \(fmt(Double(u.total)))")
+                    Text(LF("Used %@ of %@", fmt(Double(u.total - u.free)), fmt(Double(u.total))))
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
-                Button("关闭") { dismiss() }
+                Button(L("Close")) { dismiss() }
                     .keyboardShortcut(.cancelAction)
             }
             .padding()
@@ -32,7 +32,7 @@ struct SpaceAnalysisSheet: View {
             if isScanning && entries.isEmpty {
                 VStack(spacing: 10) {
                     ProgressView()
-                    Text("正在统计一级子目录大小…")
+                    Text(L("Measuring first-level directories…"))
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -62,7 +62,7 @@ struct SpaceAnalysisSheet: View {
                 if isScanning {
                     HStack(spacing: 6) {
                         ProgressView().controlSize(.small)
-                        Text("统计中，已显示部分结果…")
+                        Text(L("Scanning — showing partial results…"))
                             .foregroundStyle(.secondary)
                     }
                     .padding(6)

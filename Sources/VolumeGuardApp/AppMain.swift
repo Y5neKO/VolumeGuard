@@ -1,3 +1,4 @@
+import Core
 import SwiftUI
 
 @main
@@ -38,19 +39,19 @@ struct VolumeGuardCommands: Commands {
         CommandGroup(replacing: .help) {}
 
         // 高频操作菜单
-        CommandMenu("操作") {
-            Button("刷新占用") {
+        CommandMenu(L("Actions")) {
+            Button(L("Refresh")) {
                 vm.refreshVolumes(manual: true)
             }
             .keyboardShortcut("r")
 
-            Button("一键解除当前卷占用…") {
+            Button(L("Release All…")) {
                 vm.showKillAllConfirm = true
             }
             .keyboardShortcut("k", modifiers: [.command, .shift])
             .disabled(vm.processes.isEmpty)
 
-            Button("空间分析…") {
+            Button(L("Space Analysis…")) {
                 vm.showSpaceAnalysis = true
             }
             .keyboardShortcut("i", modifiers: .command)
@@ -58,7 +59,7 @@ struct VolumeGuardCommands: Commands {
 
             Divider()
 
-            Button("弹出当前卷") {
+            Button(L("Eject")) {
                 vm.ejectSelected()
             }
             .keyboardShortcut("e", modifiers: .command)

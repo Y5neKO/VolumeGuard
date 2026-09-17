@@ -19,7 +19,7 @@ public enum EjectService {
         do {
             try process.run()
         } catch {
-            return "无法启动 diskutil：\(error.localizedDescription)"
+            return LF("Failed to launch diskutil: %@", error.localizedDescription)
         }
         process.waitUntilExit()
 
@@ -28,7 +28,7 @@ public enum EjectService {
         let output = String(decoding: data, as: UTF8.self)
             .trimmingCharacters(in: .whitespacesAndNewlines)
         return output.isEmpty
-            ? "弹出失败（diskutil 退出码 \(process.terminationStatus)）"
+            ? LF("Eject failed (diskutil exit code %d)", process.terminationStatus)
             : output
     }
 }
