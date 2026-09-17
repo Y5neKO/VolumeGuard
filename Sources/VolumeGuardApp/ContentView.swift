@@ -15,7 +15,7 @@ struct ContentView: View {
         } detail: {
             detail
         }
-        .frame(minWidth: 780, minHeight: 480)
+        .frame(minWidth: 860, minHeight: 480)
         .alert(L("Action failed"), isPresented: $vm.showAlert) {
             Button(L("OK"), role: .cancel) {}
         } message: {
@@ -83,6 +83,15 @@ struct ContentView: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
+            // 空间分析放头部：底部栏按钮多，英文文案放不下
+            Button {
+                vm.showSpaceAnalysis = true
+            } label: {
+                Image(systemName: "chart.bar.fill")
+            }
+            .buttonStyle(.borderless)
+            .disabled(vm.selectedVolume == nil)
+            .help(L("Space Analysis"))
             if vm.isManualRefreshing {
                 ProgressView().controlSize(.small)
             }
@@ -163,27 +172,23 @@ struct ContentView: View {
             Spacer()
 
             Button {
-                vm.showSpaceAnalysis = true
-            } label: {
-                Label(L("Space Analysis"), systemImage: "chart.bar.fill")
-            }
-            .disabled(vm.selectedVolume == nil)
-
-            Button {
                 vm.showKillAllConfirm = true
             } label: {
                 if vm.isReleasing {
                     ProgressView().controlSize(.small)
                 } else {
                     Label(L("Release All"), systemImage: "sparkles.rectangle.stack")
+                        .fixedSize()
                 }
             }
             .disabled(vm.processes.isEmpty || vm.isReleasing)
 
             Button(L("Terminate")) { vm.killSelected(force: false) }
                 .disabled(vm.selectedPIDs.isEmpty)
+                .fixedSize()
             Button(L("Force Terminate")) { vm.killSelected(force: true) }
                 .disabled(vm.selectedPIDs.isEmpty)
+                .fixedSize()
 
             Divider()
                 .frame(height: 18)
@@ -192,6 +197,7 @@ struct ContentView: View {
                 vm.ejectSelected()
             } label: {
                 Label(L("Eject"), systemImage: "eject")
+                    .fixedSize()
             }
             .buttonStyle(.borderedProminent)
             .disabled(vm.selectedVolume == nil)
