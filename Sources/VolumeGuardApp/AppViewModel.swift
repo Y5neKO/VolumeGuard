@@ -230,15 +230,35 @@ final class AppViewModel: ObservableObject {
         }
     }
 
-    /// 弹出指定挂载点
+    /// 弹出指定挂载点。失败时解析 dissent 进程，给出可操作的诊断
     func eject(_ mp: String) {
         Task {
-            let err = await Task.detached(priority: .userInitiated) {
+            let result = await Task.detached(priority: .userInitiated) {
                 EjectService.eject(mountPoint: mp)
             }.value
-            if let err {
-                alert(err)
+            guard let err = result else { return }
+
+            // 回查 dissent 进程，分类给出建议
+            let summary = await Task.detached(priority: .userInitiated) { () -> (pid: pid_t, info: (name: String, execPath: String?, uid: uid_t))? in
+                guard let pid = EjectService.parseDissentPID(from: err),
+                      let info = VolumeScanner.processSummary(pid: pid)
+                else { return nil }
+                return (pid, info)
+            }.value
+
+            var message = err
+            if let s = summary {
+                let isRoot = s.info.uid != getuid()
+                let rootNote = isRoot ? L(" (running as root — cannot be released automatically)") : ""
+                message = LF("Eject blocked by PID %d — %@%@", s.pid, s.info.name, rootNote)
+                    + "\n\n" + err
+                if let hint = ProcessKnowledge.describe(name: s.info.name) {
+                    message += "\n\n" + LF("Hint: %@", hint)
+                } else if !isRoot {
+                    message += "\n\n" + L("Hint: release it from the list, then eject again.")
+                }
             }
+            alert(message)
         }
     }
 

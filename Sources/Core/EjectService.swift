@@ -31,4 +31,16 @@ public enum EjectService {
             ? LF("Eject failed (diskutil exit code %d)", process.terminationStatus)
             : output
     }
+
+    /// 从 diskutil 失败输出中解析 dissent 进程 PID
+    /// （"Unmount was dissented by PID 3589 (/usr/bin/login)"）
+    public static func parseDissentPID(from output: String) -> pid_t? {
+        guard let range = output.range(of: #"dissented by PID (\d+)"#, options: .regularExpression) else {
+            return nil
+        }
+        guard let digitRange = output.range(of: #"\d+"#, options: .regularExpression, range: range),
+              let pid = pid_t(output[digitRange])
+        else { return nil }
+        return pid
+    }
 }

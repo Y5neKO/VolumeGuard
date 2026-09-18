@@ -106,6 +106,14 @@ public enum VolumeScanner {
         .sorted()
     }
 
+    /// 按 PID 查询单个进程的基础信息（用于弹出失败时回查 dissent 进程）
+    /// - Returns: 进程名、可执行路径、uid；进程已退出或不可见时为 nil
+    public static func processSummary(pid: pid_t) -> (name: String, execPath: String?, uid: uid_t)? {
+        guard let info = procInfo(of: pid) else { return nil }
+        let name = info.execPath.map { URL(fileURLWithPath: $0).lastPathComponent } ?? info.comm
+        return (name, info.execPath, info.uid)
+    }
+
     // MARK: libproc 封装
 
     /// 全部存活进程 PID

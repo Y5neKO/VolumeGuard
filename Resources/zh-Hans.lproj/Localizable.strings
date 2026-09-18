@@ -72,3 +72,11 @@
 "PID %d: %@" = "PID %d：%@";
 "%@ (PID %d): %@" = "%@（PID %d）：%@";
 "No permission to release the following (root processes — sudo required):\n" = "以下进程无权限解除（root 进程，需 sudo）：\n";
+
+/* Eject failure diagnosis */
+" (running as root — cannot be released automatically)" = "（root 进程，无法自动解除）";
+"Eject blocked by PID %d — %@%@" = "弹出被 PID %d 阻止 — %@%@";
+"Hint: %@" = "提示：%@";
+"Hint: release it from the list, then eject again." = "提示：在列表中解除该进程后重新弹出。";
+"Terminal session wrapper — close that terminal tab, or cd out of the volume inside it" = "终端会话的包装进程 — 关闭对应的终端标签页，或在里面 cd 离开该卷";
+"Terminal shell — its working directory is on this volume; cd out or close the tab" = "终端 shell — 工作目录在该卷上，cd 离开或关闭标签页";

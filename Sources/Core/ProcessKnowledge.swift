@@ -24,6 +24,10 @@ public enum ProcessKnowledge {
             return L("File system events log")
         case "caffeinate":
             return L("Power management keep-awake")
+        case "login":
+            return L("Terminal session wrapper — close that terminal tab, or cd out of the volume inside it")
+        case "zsh", "bash", "fish", "-zsh", "-bash":
+            return L("Terminal shell — its working directory is on this volume; cd out or close the tab")
         default:
             return nil
         }
